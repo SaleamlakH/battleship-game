@@ -9,6 +9,16 @@ export class GameBoard {
     return this.#gameBoard.get(key);
   }
 
+  isMissed(coordinate) {
+    const key = this.#key(coordinate);
+    return this.#missedShot.has(key);
+  }
+
+  isHit(coordinate) {
+    const key = this.#key(coordinate);
+    return this.#hitShot.has(key);
+  }
+
   placeShip(ship, coordinate, direction) {
     if (direction === 'horizontal') {
       // number of extra cells to span
