@@ -1,5 +1,7 @@
 export class GameBoard {
   #gameBoard = new Map();
+  #missedShot = new Set();
+  #hitShot = new Set();
   #boardSize = 10;
 
   get(coordinate) {
@@ -45,6 +47,24 @@ export class GameBoard {
       const key = this.#key([x, y + i]);
       this.#gameBoard.set(key, ship);
     }
+  }
+
+  receiveAttack(coordinate) {
+    const key = this.#key(coordinate);
+
+    if (this.#missedShot.has(key) || this.#hitShot.has(key)) {
+      return false;
+    }
+
+    const ship = this.get(coordinate);
+    if (ship) {
+      ship.hit();
+      this.#hitShot.add(key);
+    } else {
+      this.#missedShot.add(key);
+    }
+
+    return true;
   }
 
   #key(coordinate) {

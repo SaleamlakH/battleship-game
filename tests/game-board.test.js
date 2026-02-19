@@ -60,4 +60,33 @@ describe('Game board', () => {
       expect(gameBoard.get([1, 10])).toEqual(destroyer);
     });
   });
+
+  describe('Receive attack', () => {
+    test('Hit attack shot increases the hit number a ship', () => {
+      gameBoard.placeShip(destroyer, [1, 1], 'horizontal');
+
+      gameBoard.receiveAttack([1, 1]);
+      gameBoard.receiveAttack([2, 1]);
+
+      gameBoard.receiveAttack([1, 2]); // missed shot
+      expect(destroyer.isSunk()).toBe(false);
+
+      gameBoard.receiveAttack([3, 1]);
+      expect(destroyer.isSunk()).toBe(true);
+    });
+
+    test('Prevent shot on missed coordinate', () => {
+      gameBoard.placeShip(destroyer, [1, 1], 'horizontal');
+
+      gameBoard.receiveAttack([1, 2]);
+      expect(gameBoard.receiveAttack([1, 2])).toBe(false);
+    });
+
+    test('Prevent shot on hit coordinate', () => {
+      gameBoard.placeShip(destroyer, [1, 1], 'horizontal');
+
+      gameBoard.receiveAttack([1, 1]);
+      expect(gameBoard.receiveAttack([1, 1])).toBe(false);
+    });
+  });
 });
