@@ -1,8 +1,19 @@
+import { createFleet } from './ship';
+
 export class GameBoard {
   #gameBoard = new Map();
   #missedShot = new Set();
   #hitShot = new Set();
   #boardSize = 10;
+  #fleet;
+
+  constructor(fleet = createFleet()) {
+    this.#fleet = fleet;
+  }
+
+  get fleet() {
+    return this.#fleet.map((ship) => ({ type: ship.type, size: ship.size }));
+  }
 
   get(coordinate) {
     const key = this.#key(coordinate);
@@ -91,5 +102,9 @@ export class GameBoard {
 
   #key(coordinate) {
     return `${coordinate[0]},${coordinate[1]}`;
+  }
+
+  hasAllShipsSunk() {
+    return this.#fleet.every((ship) => ship.isSunk());
   }
 }

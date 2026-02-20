@@ -104,4 +104,24 @@ describe('Game board', () => {
       expect(gameBoard.receiveAttack([1, 11])).toBe(false);
     });
   });
+
+  describe('Report wether all ships has been sunk', () => {
+    const mockFleet = [new Ship('destroyer', 3), new Ship('patrol-boat', 2)];
+    const mockGameBoard = new GameBoard(mockFleet);
+
+    mockFleet[0].hit();
+    mockFleet[1].hit();
+    mockFleet[1].hit();
+
+    test('Return false if any ship is not sunk', () => {
+      expect(mockGameBoard.hasAllShipsSunk()).toBe(false);
+    });
+
+    test('Return true if all ships are sunk', () => {
+      mockFleet[0].hit();
+      mockFleet[0].hit();
+
+      expect(mockGameBoard.hasAllShipsSunk()).toBe(true);
+    });
+  });
 });
