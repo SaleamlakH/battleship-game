@@ -59,6 +59,14 @@ describe('Game board', () => {
       gameBoard.placeShip(destroyer, coordinate, direction);
       expect(gameBoard.get([1, 10])).toEqual(destroyer);
     });
+
+    test('Reject invalid coordinate', () => {
+      expect(gameBoard.placeShip(destroyer, [-1, 1], 'horizontal')).toBe(false);
+    });
+
+    test('Reject invalid direction', () => {
+      expect(gameBoard.placeShip(destroyer, [1, 1], 'diagonal')).toBe(false);
+    });
   });
 
   describe('Receive attack', () => {

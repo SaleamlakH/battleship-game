@@ -20,12 +20,15 @@ export class GameBoard {
   }
 
   placeShip(ship, coordinate, direction) {
+    if (!this.#isValidCoordinate(coordinate)) return false;
+
     if (direction === 'horizontal') {
       // number of extra cells to span
       const numSpan = ship.size - 1;
       if (coordinate[0] + numSpan > this.#boardSize) return;
 
       this.#placeInHorizontal(ship, coordinate);
+      return true;
     }
 
     if (direction === 'vertical') {
@@ -34,7 +37,10 @@ export class GameBoard {
       if (coordinate[1] + numSpan > this.#boardSize) return;
 
       this.#placeInVertical(ship, coordinate);
+      return true;
     }
+
+    return false;
   }
 
   #placeInHorizontal(ship, coordinate) {
