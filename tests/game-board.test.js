@@ -88,5 +88,12 @@ describe('Game board', () => {
       gameBoard.receiveAttack([1, 1]);
       expect(gameBoard.receiveAttack([1, 1])).toBe(false);
     });
+
+    test('Reject invalid coordinate', () => {
+      expect(gameBoard.receiveAttack([0, 1])).toBe(false);
+      expect(gameBoard.receiveAttack([1, 0])).toBe(false);
+      expect(gameBoard.receiveAttack([11, 1])).toBe(false);
+      expect(gameBoard.receiveAttack([1, 11])).toBe(false);
+    });
   });
 });

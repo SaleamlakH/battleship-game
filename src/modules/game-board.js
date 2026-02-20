@@ -60,6 +60,8 @@ export class GameBoard {
   }
 
   receiveAttack(coordinate) {
+    if (!this.#isValidCoordinate(coordinate)) return false;
+
     const key = this.#key(coordinate);
 
     if (this.#missedShot.has(key) || this.#hitShot.has(key)) {
@@ -75,6 +77,10 @@ export class GameBoard {
     }
 
     return true;
+  }
+
+  #isValidCoordinate([x, y]) {
+    return x >= 1 && x <= this.#boardSize && y >= 1 && y <= this.#boardSize;
   }
 
   #key(coordinate) {
