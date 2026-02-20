@@ -6,7 +6,7 @@ describe('Game board', () => {
   let destroyer;
   beforeEach(() => {
     gameBoard = new GameBoard();
-    destroyer = new Ship(3);
+    destroyer = new Ship('destroyer', 3);
   });
 
   describe('Place ship', () => {

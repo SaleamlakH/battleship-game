@@ -1,9 +1,15 @@
 export class Ship {
+  #type;
   #size;
   #hit = 0;
 
-  constructor(size) {
+  constructor(type, size) {
     this.#size = size;
+    this.#type = type;
+  }
+
+  get type() {
+    return this.#type;
   }
 
   get size() {
