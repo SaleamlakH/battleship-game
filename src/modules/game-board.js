@@ -38,8 +38,7 @@ export class GameBoard {
       const numSpan = ship.size - 1;
       if (coordinate[0] + numSpan > this.#boardSize) return;
 
-      this.#placeInHorizontal(ship, coordinate);
-      return true;
+      return this.#placeInHorizontal(ship, coordinate);
     }
 
     if (direction === 'vertical') {
@@ -47,8 +46,7 @@ export class GameBoard {
       const numSpan = ship.size - 1;
       if (coordinate[1] + numSpan > this.#boardSize) return;
 
-      this.#placeInVertical(ship, coordinate);
-      return true;
+      return this.#placeInVertical(ship, coordinate);
     }
 
     return false;
@@ -56,24 +54,36 @@ export class GameBoard {
 
   #placeInHorizontal(ship, coordinate) {
     const [x, y] = coordinate;
-    const key = this.#key([x, y]);
-    this.#gameBoard.set(key, ship);
+    const possibleCoords = [];
 
-    for (let i = 1; i < ship.size; i++) {
-      const key = this.#key([x + i, y]);
-      this.#gameBoard.set(key, ship);
+    for (let i = 0; i < ship.size; i++) {
+      if (this.get([x + i, y])) return false;
+      possibleCoords.push([x + i, y]);
     }
+
+    possibleCoords.forEach((coord) => {
+      let key = this.#key(coord);
+      this.#gameBoard.set(key, ship);
+    });
+
+    return true;
   }
 
   #placeInVertical(ship, coordinate) {
     const [x, y] = coordinate;
-    const key = this.#key([x, y]);
-    this.#gameBoard.set(key, ship);
+    const possibleCoords = [];
 
-    for (let i = 1; i < ship.size; i++) {
-      const key = this.#key([x, y + i]);
-      this.#gameBoard.set(key, ship);
+    for (let i = 0; i < ship.size; i++) {
+      if (this.get([x, y + i])) return false;
+      possibleCoords.push([x, y + i]);
     }
+
+    possibleCoords.forEach((coord) => {
+      const key = this.#key(coord);
+      this.#gameBoard.set(key, ship);
+    });
+
+    return true;
   }
 
   receiveAttack(coordinate) {

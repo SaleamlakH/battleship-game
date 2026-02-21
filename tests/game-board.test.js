@@ -60,6 +60,47 @@ describe('Game board', () => {
       expect(gameBoard.get([1, 10])).toEqual(destroyer);
     });
 
+    test('Return false if there is overlap (horizontal)', () => {
+      let coordinate = [5, 1];
+      const direction = 'horizontal';
+      gameBoard.placeShip(destroyer, coordinate, direction);
+
+      coordinate = [3, 1]; // overlap one coordinates
+      expect(gameBoard.placeShip(destroyer, coordinate, direction)).toBe(false);
+    });
+
+    test('All possible coordinate are empty if there is overlap (horizontal)', () => {
+      let coordinate = [5, 1];
+      const direction = 'horizontal';
+      gameBoard.placeShip(destroyer, coordinate, direction);
+
+      coordinate = [3, 1]; // overlap one coordinates
+      gameBoard.placeShip(destroyer, coordinate, direction);
+      expect(gameBoard.get([3, 1])).toBe(undefined);
+      expect(gameBoard.get([4, 1])).toBe(undefined);
+    });
+
+    test('Return false if overlap (vertical) ', () => {
+      let coordinate = [1, 5];
+      const direction = 'vertical';
+
+      gameBoard.placeShip(destroyer, coordinate, direction);
+
+      coordinate = [1, 3]; // overlap one coordinates
+      expect(gameBoard.placeShip(destroyer, coordinate, direction)).toBe(false);
+    });
+
+    test('All possible coordinate are empty if there is overlap (vertical)', () => {
+      let coordinate = [1, 5];
+      const direction = 'vertical';
+      gameBoard.placeShip(destroyer, coordinate, direction);
+
+      coordinate = [1, 3]; // overlap one coordinates
+      gameBoard.placeShip(destroyer, coordinate, direction);
+      expect(gameBoard.get([1, 3])).toBe(undefined);
+      expect(gameBoard.get([1, 4])).toBe(undefined);
+    });
+
     test('Reject invalid coordinate', () => {
       expect(gameBoard.placeShip(destroyer, [-1, 1], 'horizontal')).toBe(false);
     });
