@@ -1,5 +1,10 @@
 import { createFleet } from './ship';
 
+const DIRECTION_VECTORS = Object.freeze({
+  horizontal: [1, 0],
+  vertical: [0, 1],
+});
+
 export class GameBoard {
   #gameBoard = new Map();
   #missedShot = new Set();
@@ -33,57 +38,53 @@ export class GameBoard {
   placeShip(ship, coordinate, direction) {
     if (!this.#isValidCoordinate(coordinate)) return false;
 
-    if (direction === 'horizontal') {
-      // number of extra cells to span
-      const numSpan = ship.size - 1;
-      if (coordinate[0] + numSpan > this.#boardSize) return;
+    const delta = DIRECTION_VECTORS[direction];
+    if (!delta) return false;
 
-      return this.#placeInHorizontal(ship, coordinate);
-    }
+    if (!this.#hasEnoughCoords(ship.size, coordinate, delta[0])) return false;
 
-    if (direction === 'vertical') {
-      // number of extra cells to span
-      const numSpan = ship.size - 1;
-      if (coordinate[1] + numSpan > this.#boardSize) return;
+    const coordinates = this.#getPlacementCoords(ship.size, coordinate, delta);
+    if (this.#hasOverlap(coordinates)) return false;
 
-      return this.#placeInVertical(ship, coordinate);
-    }
-
-    return false;
-  }
-
-  #placeInHorizontal(ship, coordinate) {
-    const [x, y] = coordinate;
-    const possibleCoords = [];
-
-    for (let i = 0; i < ship.size; i++) {
-      if (this.get([x + i, y])) return false;
-      possibleCoords.push([x + i, y]);
-    }
-
-    possibleCoords.forEach((coord) => {
-      let key = this.#key(coord);
-      this.#gameBoard.set(key, ship);
-    });
-
-    return true;
-  }
-
-  #placeInVertical(ship, coordinate) {
-    const [x, y] = coordinate;
-    const possibleCoords = [];
-
-    for (let i = 0; i < ship.size; i++) {
-      if (this.get([x, y + i])) return false;
-      possibleCoords.push([x, y + i]);
-    }
-
-    possibleCoords.forEach((coord) => {
+    coordinates.forEach((coord) => {
       const key = this.#key(coord);
       this.#gameBoard.set(key, ship);
     });
 
     return true;
+  }
+
+  #hasOverlap(coordinates) {
+    return coordinates.some((coordinates) => this.get(coordinates));
+  }
+
+  #hasEnoughCoords(shipSize, coordinate, dx) {
+    const [x, y] = coordinate;
+
+    // 1 is subtracted because counting starts from the coordinate given;
+    if (dx) {
+      return x >= 1 && x + --shipSize <= this.#boardSize;
+    }
+
+    return y >= 1 && y + --shipSize <= this.#boardSize;
+  }
+
+  #getPlacementCoords(shipSize, [x, y], [dx, dy]) {
+    const coordinates = [];
+
+    for (let i = 0; i < shipSize; i++) {
+      const newX = x + dx * i;
+      const newY = y + dy * i;
+
+      // not enough coords
+      if (newX > this.#boardSize || newY > this.#boardSize) {
+        return coordinates;
+      }
+
+      coordinates.push([newX, newY]);
+    }
+
+    return coordinates;
   }
 
   receiveAttack(coordinate) {
