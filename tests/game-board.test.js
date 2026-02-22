@@ -2,6 +2,9 @@ import { GameBoard } from '../src/modules/game-board';
 import { Ship } from '../src/modules/ship';
 
 describe('Game board', () => {
+  const horizontal = 'horizontal';
+  const vertical = 'vertical';
+
   let gameBoard;
   let destroyer;
   beforeEach(() => {
@@ -12,97 +15,89 @@ describe('Game board', () => {
   describe('Place ship', () => {
     test('Place a ship horizontally at specific coordinates', () => {
       const coordinate = [1, 10];
-      const direction = 'horizontal';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
       expect(gameBoard.get([1, 10])).toEqual(destroyer);
       expect(gameBoard.get([2, 10])).toEqual(destroyer);
     });
 
     test('Place a ship vertically at specific coordinates', () => {
       const coordinate = [1, 1];
-      const direction = 'vertical';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
       expect(gameBoard.get([1, 1])).toEqual(destroyer);
       expect(gameBoard.get([1, 2])).toEqual(destroyer);
     });
 
     test('Prevent placement when there is no enough spot (horizontal)', () => {
       const coordinate = [9, 10];
-      const direction = 'horizontal';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
       expect(gameBoard.get([9, 10])).toBe(undefined);
     });
 
     test('Prevent placement when there is no enough spot (vertical)', () => {
       const coordinate = [9, 10];
-      const direction = 'vertical';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
       expect(gameBoard.get([9, 10])).toBe(undefined);
     });
 
     test('Place horizontally at the last coordinates', () => {
       const coordinate = [8, 10];
-      const direction = 'horizontal';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
       expect(gameBoard.get([8, 10])).toEqual(destroyer);
     });
 
     test('Place vertically at the last coordinates', () => {
       const coordinate = [1, 8];
-      const direction = 'vertical';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
       expect(gameBoard.get([1, 10])).toEqual(destroyer);
     });
 
     test('Return false if there is overlap (horizontal)', () => {
       let coordinate = [5, 1];
-      const direction = 'horizontal';
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
 
       coordinate = [3, 1]; // overlap one coordinates
-      expect(gameBoard.placeShip(destroyer, coordinate, direction)).toBe(false);
+      expect(gameBoard.placeShip(destroyer, coordinate, horizontal)).toBe(
+        false,
+      );
     });
 
     test('All possible coordinate are empty if there is overlap (horizontal)', () => {
       let coordinate = [5, 1];
-      const direction = 'horizontal';
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
 
       coordinate = [3, 1]; // overlap one coordinates
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, horizontal);
       expect(gameBoard.get([3, 1])).toBe(undefined);
       expect(gameBoard.get([4, 1])).toBe(undefined);
     });
 
     test('Return false if overlap (vertical) ', () => {
       let coordinate = [1, 5];
-      const direction = 'vertical';
 
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
 
       coordinate = [1, 3]; // overlap one coordinates
-      expect(gameBoard.placeShip(destroyer, coordinate, direction)).toBe(false);
+      expect(gameBoard.placeShip(destroyer, coordinate, vertical)).toBe(false);
     });
 
     test('All possible coordinate are empty if there is overlap (vertical)', () => {
       let coordinate = [1, 5];
-      const direction = 'vertical';
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
 
       coordinate = [1, 3]; // overlap one coordinates
-      gameBoard.placeShip(destroyer, coordinate, direction);
+      gameBoard.placeShip(destroyer, coordinate, vertical);
       expect(gameBoard.get([1, 3])).toBe(undefined);
       expect(gameBoard.get([1, 4])).toBe(undefined);
     });
 
     test('Reject invalid coordinate', () => {
-      expect(gameBoard.placeShip(destroyer, [-1, 1], 'horizontal')).toBe(false);
+      expect(gameBoard.placeShip(destroyer, [-1, 1], horizontal)).toBe(false);
     });
 
     test('Reject invalid direction', () => {
