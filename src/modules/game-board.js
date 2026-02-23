@@ -1,6 +1,6 @@
 import { createFleet } from './ship';
 
-const DIRECTION_VECTORS = Object.freeze({
+export const DIRECTION_VECTORS = Object.freeze({
   horizontal: [1, 0],
   vertical: [0, 1],
 });
@@ -23,7 +23,7 @@ export class GameBoard {
   }
 
   get fleet() {
-    return this.#fleet.map((ship) => ({ type: ship.type, size: ship.size }));
+    return this.#fleet;
   }
 
   get(coordinate) {
