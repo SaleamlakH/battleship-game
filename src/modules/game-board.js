@@ -5,6 +5,12 @@ const DIRECTION_VECTORS = Object.freeze({
   vertical: [0, 1],
 });
 
+export const placementStatus = Object.freeze({
+  SUCCESS: 'success',
+  OVERLAP: 'overlap',
+  NO_ENOUGH_PLACE: 'no-enough-place',
+});
+
 export class GameBoard {
   #gameBoard = new Map();
   #missedShot = new Set();
@@ -36,26 +42,51 @@ export class GameBoard {
   }
 
   placeShip(ship, coordinate, direction) {
-    if (!this.#isValidCoordinate(coordinate)) return false;
+    if (!this.#isValidCoordinate(coordinate)) {
+      throw RangeError('Invalid Coordinate');
+    }
 
     const delta = DIRECTION_VECTORS[direction];
-    if (!delta) return false;
-
-    if (!this.#hasEnoughCoords(ship.size, coordinate, delta[0])) return false;
+    if (!delta) {
+      throw TypeError('Invalid Direction');
+    }
 
     const coordinates = this.#getPlacementCoords(ship.size, coordinate, delta);
-    if (this.#hasOverlap(coordinates)) return false;
+
+    if (!this.#hasEnoughCoords(ship.size, coordinate, delta[0])) {
+      return {
+        coordinates,
+        overlaps: [],
+        success: false,
+        status: placementStatus.NO_ENOUGH_PLACE,
+      };
+    }
+
+    const overlaps = this.#overlapCoordinates(coordinates);
+    if (overlaps.length) {
+      return {
+        coordinates,
+        overlaps,
+        success: false,
+        status: placementStatus.OVERLAP,
+      };
+    }
 
     coordinates.forEach((coord) => {
       const key = this.#key(coord);
       this.#gameBoard.set(key, ship);
     });
 
-    return true;
+    return {
+      coordinates,
+      overlaps,
+      success: true,
+      status: placementStatus.SUCCESS,
+    };
   }
 
-  #hasOverlap(coordinates) {
-    return coordinates.some((coordinates) => this.get(coordinates));
+  #overlapCoordinates(coordinates) {
+    return coordinates.filter((coordinates) => this.get(coordinates));
   }
 
   #hasEnoughCoords(shipSize, coordinate, dx) {
