@@ -64,7 +64,7 @@ describe('Game board', () => {
       const result = gameBoard.placeShip(destroyer, coordinate, vertical);
 
       expect(result.success).toBe(false);
-      expect(result.status).toBe((placementStatus.NO_ENOUGH_PLACE));
+      expect(result.status).toBe(placementStatus.NO_ENOUGH_PLACE);
     });
 
     test('Place at the last coordinates (horizontal)', () => {
@@ -173,10 +173,12 @@ describe('Game board', () => {
     });
 
     test('Reject invalid coordinate', () => {
-      expect(gameBoard.receiveAttack([0, 1])).toBe(false);
-      expect(gameBoard.receiveAttack([1, 0])).toBe(false);
-      expect(gameBoard.receiveAttack([11, 1])).toBe(false);
-      expect(gameBoard.receiveAttack([1, 11])).toBe(false);
+      // prettier-ignore
+      const invalidCoords = [[0, 1], [1, 0], [11, 1], [1, 11]];
+
+      invalidCoords.forEach((coordinate) => {
+        expect(() => gameBoard.receiveAttack(coordinate)).toThrow(RangeError);
+      });
     });
   });
 

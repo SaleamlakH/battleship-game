@@ -119,7 +119,9 @@ export class GameBoard {
   }
 
   receiveAttack(coordinate) {
-    if (!this.#isValidCoordinate(coordinate)) return false;
+    if (!this.#isValidCoordinate(coordinate)) {
+      throw RangeError('Invalid coordinate');
+    }
 
     const key = this.#key(coordinate);
 
