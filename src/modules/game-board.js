@@ -130,18 +130,18 @@ export class GameBoard {
     const key = this.#key(coordinate);
 
     if (this.#missedShot.has(key) || this.#hitShot.has(key)) {
-      return false;
+      return { success: false, hit: false };
     }
 
     const ship = this.get(coordinate);
     if (ship) {
       ship.hit();
       this.#hitShot.add(key);
-    } else {
-      this.#missedShot.add(key);
+      return { success: true, hit: true };
     }
 
-    return true;
+    this.#missedShot.add(key);
+    return { success: true, hit: false };
   }
 
   #isValidCoordinate([x, y]) {

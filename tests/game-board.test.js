@@ -160,16 +160,18 @@ describe('Game board', () => {
 
     test('Prevent shot on missed coordinate', () => {
       gameBoard.placeShip(destroyer, [1, 1], 'horizontal');
-
       gameBoard.receiveAttack([1, 2]);
-      expect(gameBoard.receiveAttack([1, 2])).toBe(false);
+
+      const attack = gameBoard.receiveAttack([1, 2]);
+      expect(attack.success).toBe(false);
     });
 
     test('Prevent shot on hit coordinate', () => {
       gameBoard.placeShip(destroyer, [1, 1], 'horizontal');
-
       gameBoard.receiveAttack([1, 1]);
-      expect(gameBoard.receiveAttack([1, 1])).toBe(false);
+
+      const attack = gameBoard.receiveAttack([1, 1]);
+      expect(attack.success).toBe(false);
     });
 
     test('Reject invalid coordinate', () => {
