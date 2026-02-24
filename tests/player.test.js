@@ -1,4 +1,4 @@
-import { Player } from '../src/modules/player';
+import { Player, Computer } from '../src/modules/player';
 
 describe('Player', () => {
   describe('Place randomly', () => {
@@ -31,5 +31,21 @@ describe('Player', () => {
         });
       });
     });
+  });
+});
+
+describe('Computer', () => {
+  let player, computer, gameBoard;
+  beforeEach(() => {
+    player = new Player();
+    player.placeRandomly();
+    gameBoard = player.gameBoard;
+    computer = new Computer();
+  });
+
+  test('Shoot return coordinate and whether it is hit', () => {
+    const { target, hit } = computer.shoot(gameBoard);
+    expect(target).toBeDefined();
+    expect(hit).toBeDefined();
   });
 });

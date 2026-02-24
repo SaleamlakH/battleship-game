@@ -42,3 +42,52 @@ export class Player {
     return placement;
   }
 }
+
+export class Computer extends Player {
+  #targets;
+
+  constructor() {
+    super();
+    this.#targets = this.#buildTargets();
+  }
+
+  #buildTargets() {
+    const targets = [];
+
+    for (let i = 1; i <= this.gameBoard.boardSize; i++) {
+      for (let j = 1; j <= this.gameBoard.boardSize; j++) {
+        targets.push([i, j]);
+      }
+    }
+
+    return targets;
+  }
+
+  shoot(gameBoard) {
+    if (!this.#targets.length) {
+      return { target: undefined, success: false, hit: false };
+    }
+
+    const target = this.#getRandomTarget();
+    const { success, hit } = gameBoard.receiveAttack(target);
+
+    return { target, success, hit };
+  }
+
+  #getRandomTarget() {
+    const randIndex = Math.floor(Math.random() * this.#targets.length);
+    const target = this.#targets[randIndex];
+
+    // swap the last
+    const lastIndex = this.#targets.length - 1;
+    [this.#targets[randIndex], this.#targets[lastIndex]] = [
+      this.#targets[lastIndex],
+      this.#targets[randIndex],
+    ];
+
+    // remove the last
+    this.#targets.pop();
+
+    return target;
+  }
+}
