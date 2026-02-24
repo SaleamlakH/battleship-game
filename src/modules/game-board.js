@@ -26,6 +26,10 @@ export class GameBoard {
     return this.#fleet;
   }
 
+  get boardSize() {
+    return this.#boardSize;
+  }
+
   get(coordinate) {
     const key = this.#key(coordinate);
     return this.#gameBoard.get(key);

@@ -22,8 +22,8 @@ export class Player {
           directions[Math.floor(Math.random() * directions.length)];
 
         const coordinate = [
-          Math.floor(Math.random() * 10) + 1,
-          Math.floor(Math.random() * 10) + 1,
+          Math.floor(Math.random() * this.#gameBoard.boardSize) + 1,
+          Math.floor(Math.random() * this.#gameBoard.boardSize) + 1,
         ];
 
         const result = this.#gameBoard.placeShip(ship, coordinate, direction);
