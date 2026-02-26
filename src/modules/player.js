@@ -1,4 +1,4 @@
-import { GameBoard, DIRECTION_VECTORS } from './game-board';
+import { GameBoard, DIRECTION_VECTORS } from './game-board.js';
 
 export class Player {
   #gameBoard;

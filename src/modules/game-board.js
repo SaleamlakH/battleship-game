@@ -1,4 +1,4 @@
-import { createFleet } from './ship';
+import { createFleet } from './ship.js';
 
 export const DIRECTION_VECTORS = Object.freeze({
   horizontal: [1, 0],
