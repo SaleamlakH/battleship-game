@@ -31,6 +31,7 @@ export class Player {
         success = result.success;
         if (success) {
           placement.push({
+            dirVector: DIRECTION_VECTORS[direction],
             type: ship.type,
             size: ship.size,
             coordinates: result.coordinates,
