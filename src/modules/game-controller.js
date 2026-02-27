@@ -1,21 +1,24 @@
 export class GameController {
   #currentPlayer;
-  #enemy;
+  #opponent;
 
-  constructor(currentPlayer, enemy) {
+  constructor(currentPlayer, opponent) {
     this.#currentPlayer = currentPlayer;
-    this.#enemy = enemy;
+    this.#opponent = opponent;
   }
 
   get currentPlayer() {
     return this.#currentPlayer;
   }
 
-  get enemy() {
-    return this.#enemy;
+  get opponent() {
+    return this.#opponent;
   }
 
-  changeCurrentPlayer() {
-    [this.#currentPlayer, this.#enemy] = [this.#enemy, this.#currentPlayer];
+  #changeCurrentPlayer() {
+    [this.#currentPlayer, this.#opponent] = [
+      this.#opponent,
+      this.#currentPlayer,
+    ];
   }
 }
