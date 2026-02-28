@@ -1,18 +1,36 @@
 export class BoardDisplay {
-  static buildBoard({ boardSize, onShoot = null }, isEnemyBoard) {
+  #ownBoard;
+  #opponentBoard;
+
+  constructor(boardSize, playRound) {
+    this.#ownBoard = this.#buildBoard(false, boardSize, playRound);
+    this.#opponentBoard = this.#buildBoard(true, boardSize, playRound);
+  }
+
+  get ownBoard() {
+    return this.#ownBoard;
+  }
+
+  get opponentBoard() {
+    return this.#opponentBoard;
+  }
+
+  #buildBoard(opponent, boardSize, playRound) {
     const container = document.createElement('div');
     container.classList.add('game-board');
 
     this.#appendChildren(boardSize, container);
 
-    if (isEnemyBoard) {
-      this.#attachShootEventHandler(onShoot, container);
+    if (opponent) {
+      container.addEventListener('click', (e) =>
+        this.#attackHandler(e, playRound),
+      );
     }
 
     return container;
   }
 
-  static #appendChildren(size, container) {
+  #appendChildren(size, container) {
     for (let y = 1; y <= size; y++) {
       for (let x = 1; x <= size; x++) {
         const cell = document.createElement('div');
@@ -24,19 +42,44 @@ export class BoardDisplay {
     }
   }
 
-  static #attachShootEventHandler(onShoot, container) {
-    container.addEventListener('click', (e) => {
-      if (!e.target.dataset.x) return;
+  async #attackHandler(e, playRound) {
+    const element = e.target;
+    if (!element.dataset.x) return;
 
-      const x = Number(e.target.dataset.x);
-      const y = Number(e.target.dataset.y);
-      const attack = onShoot([x, y]);
+    // read coordinates and pass to playRound
+    const x = Number(element.dataset.x);
+    const y = Number(element.dataset.y);
+    const roundResult = playRound([x, y]);
 
-      if (attack.success) {
-        const className = attack.hit ? 'hit' : 'missed';
-        e.target.classList.add(className);
-      }
-    });
+    // return when invalid/ attack not successful
+    if (roundResult.invalid) return;
+
+    // style attack target square
+    this.#setAttackStyle(element, roundResult.human.hit);
+
+    // style computer attack target square
+    await this.#delay(500);
+    if (roundResult.computer) {
+      this.#styleComputerTarget(roundResult.computer);
+    }
+  }
+
+  #styleComputerTarget(computerAttack) {
+    const [x, y] = computerAttack.coordinate;
+    const element = this.#ownBoard.querySelector(
+      `[data-x='${x}'][data-y='${y}']`,
+    );
+
+    this.#setAttackStyle(element, computerAttack.hit);
+  }
+
+  #delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  #setAttackStyle(element, hit) {
+    const className = hit ? 'hit' : 'missed';
+    element.classList.add(className);
   }
 
   static showFleet(fleetPlacement, boardContainer) {
