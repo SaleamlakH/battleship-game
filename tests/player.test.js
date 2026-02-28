@@ -43,9 +43,10 @@ describe('Computer', () => {
     computer = new Computer();
   });
 
-  test('Shoot return coordinate and whether it is hit', () => {
-    const { target, hit } = computer.shoot(gameBoard);
-    expect(target).toBeDefined();
-    expect(hit).toBeDefined();
+  test('Choose target return coordinate', () => {
+    const [x, y] = computer.chooseTarget();
+
+    expect(x).toBeDefined();
+    expect(y).toBeDefined();
   });
 });

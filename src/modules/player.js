@@ -64,18 +64,7 @@ export class Computer extends Player {
     return targets;
   }
 
-  shoot(gameBoard) {
-    if (!this.#targets.length) {
-      return { target: undefined, success: false, hit: false };
-    }
-
-    const target = this.#getRandomTarget();
-    const { success, hit } = gameBoard.receiveAttack(target);
-
-    return { target, success, hit };
-  }
-
-  #getRandomTarget() {
+  chooseTarget() {
     const randIndex = Math.floor(Math.random() * this.#targets.length);
     const target = this.#targets[randIndex];
 
