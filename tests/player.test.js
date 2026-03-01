@@ -35,18 +35,15 @@ describe('Player', () => {
 });
 
 describe('Computer', () => {
-  let player, computer, gameBoard;
+  let computer, target;
   beforeEach(() => {
-    player = new Player();
-    player.placeRandomly();
-    gameBoard = player.gameBoard;
     computer = new Computer();
+
+    target = computer.chooseTarget();
   });
 
   test('Choose target return coordinate', () => {
-    const [x, y] = computer.chooseTarget();
-
-    expect(x).toBeDefined();
-    expect(y).toBeDefined();
+    expect(target).toBeDefined();
+    expect(target.length).toBe(2);
   });
 });
