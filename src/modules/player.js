@@ -68,16 +68,16 @@ export class Computer extends Player {
     const randIndex = Math.floor(Math.random() * this.#targets.length);
     const target = this.#targets[randIndex];
 
-    // swap the last
-    const lastIndex = this.#targets.length - 1;
-    [this.#targets[randIndex], this.#targets[lastIndex]] = [
-      this.#targets[lastIndex],
-      this.#targets[randIndex],
-    ];
-
-    // remove the last
-    this.#targets.pop();
+    // remove from #targets
+    this.#deleteItem(this.#targets, randIndex);
 
     return target;
+  }
+
+  #deleteItem(array, index) {
+    const lastIndex = array.length - 1;
+    [array[index], array[lastIndex]] = [array[lastIndex], array[index]];
+
+    this.#targets.pop();
   }
 }
