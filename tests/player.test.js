@@ -38,12 +38,19 @@ describe('Computer', () => {
   let computer, target;
   beforeEach(() => {
     computer = new Computer();
-
     target = computer.chooseTarget();
   });
 
   test('Choose target return coordinate', () => {
     expect(target).toBeDefined();
     expect(target.length).toBe(2);
+  });
+
+  test('Return a neighbor coordinate after hit shoot', () => {
+    const [x, y] = computer.chooseTarget();
+
+    // absolute value of their difference is 0 or 1;
+    expect([0, 1]).toContain(Math.abs(target[0] - x));
+    expect([0, 1]).toContain(Math.abs(target[1] - y));
   });
 });

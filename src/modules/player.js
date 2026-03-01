@@ -46,6 +46,9 @@ export class Player {
 
 export class Computer extends Player {
   #targets;
+  #candidateTargets = [];
+  #recentTarget = { target: null, vector: null };
+  #VECTORS = { left: [-1, 0], right: [1, 0], top: [0, -1], bottom: [0, 1] };
 
   constructor() {
     super();
@@ -65,19 +68,92 @@ export class Computer extends Player {
   }
 
   chooseTarget() {
-    const randIndex = Math.floor(Math.random() * this.#targets.length);
-    const target = this.#targets[randIndex];
+    // get hit
+    if (this.#recentTarget.target || this.#candidateTargets.length) {
+      const { target, index, vector } = this.#getCandidate();
+      this.#recentTarget = { ...this.#recentTarget, target, index, vector };
+
+      this.#deleteItem(this.#targets, index);
+      return target;
+    }
+
+    // random target
+    const index = Math.floor(Math.random() * this.#targets.length);
+    const target = this.#targets[index];
+    this.#recentTarget = { ...this.#recentTarget, target, index };
 
     // remove from #targets
-    this.#deleteItem(this.#targets, randIndex);
+    this.#deleteItem(this.#targets, index);
 
     return target;
+  }
+
+  handleShotResult({ hit }) {
+    if (!hit) {
+      this.#recentTarget.target = null;
+      this.#recentTarget.vector = null;
+    }
+  }
+
+  #getCandidate() {
+    // knows which side to follow
+    if (this.#recentTarget.target && this.#recentTarget.vector) {
+      const [x, y] = this.#recentTarget.target;
+      const [dx, dy] = this.#recentTarget.vector;
+
+      const target = [x + dx, y + dy];
+
+      // validate
+      const index = this.#targets.findIndex(
+        ([x, y]) => target[0] === x && target[1] === y,
+      );
+
+      if (index >= 0) {
+        this.#removeCrossCandidates([dx, dy]);
+        return { ...this.#recentTarget, index, target: [x + dx, y + dy] };
+      }
+    }
+
+    // calculate possible targets
+    if (!this.#candidateTargets.length) this.#setCandidateTargets();
+
+    return this.#candidateTargets.pop();
+  }
+
+  #setCandidateTargets() {
+    const [x, y] = this.#recentTarget.target;
+
+    for (const key in this.#VECTORS) {
+      const [dx, dy] = this.#VECTORS[key];
+      const target = [x + dx, y + dy];
+
+      // check if it is in targets
+      const index = this.#targets.findIndex(
+        ([x, y]) => target[0] === x && target[1] === y,
+      );
+
+      if (index === -1) continue;
+      this.#candidateTargets.push({
+        target,
+        index,
+        vector: this.#VECTORS[key],
+      });
+    }
+  }
+
+  // remove candidate which line perpendicular to the target
+  #removeCrossCandidates(vector) {
+    const [dx, dy] = vector;
+
+    this.#candidateTargets = this.#candidateTargets.filter(({ vector }) => {
+      return vector[0] + dx === 0 && vector[1] + dy === 0;
+    });
   }
 
   #deleteItem(array, index) {
     const lastIndex = array.length - 1;
     [array[index], array[lastIndex]] = [array[lastIndex], array[index]];
 
-    this.#targets.pop();
+    return this.#targets.pop();
   }
 }

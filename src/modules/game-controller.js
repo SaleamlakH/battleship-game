@@ -36,6 +36,7 @@ export class GameController {
       const { computer, winner } = this.#computerAttack();
       [roundResult.computer, roundResult.winner] = [computer, winner];
 
+      this.#currentPlayer.handleShotResult(computer);
       this.#changeCurrentPlayer();
     }
 
