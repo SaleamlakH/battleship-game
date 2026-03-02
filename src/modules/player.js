@@ -71,7 +71,6 @@ export class Computer extends Player {
     // get hit
     if (this.#recentHit.vector || this.#candidateTargets.length) {
       const { target, index, vector } = this.#getCandidate();
-      if (this.#recentHit.vector) this.#removeCrossCandidates(vector);
 
       this.#recentHit.vector = vector;
       this.#deleteItem(this.#targets, index);
@@ -97,6 +96,11 @@ export class Computer extends Player {
 
     // save it
     this.#recentHit.target = coordinate;
+
+    // knows in which direction to shot
+    if (this.#recentHit.vector) {
+      this.#removeCrossCandidates(this.#recentHit.vector);
+    }
 
     // need to set new candidates;
     if (!this.#candidateTargets.length) {
