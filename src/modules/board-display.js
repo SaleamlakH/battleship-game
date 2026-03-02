@@ -55,13 +55,12 @@ export class BoardDisplay {
     if (roundResult.invalid) return;
 
     // style attack target square
-    this.#setAttackStyle(element, roundResult.human.hit);
+    this.#setAttackStyle(element, roundResult.humanAttack.hit);
 
     // style computer attack target square
     await this.#delay(500);
-    if (roundResult.computer) {
-      this.#styleComputerTarget(roundResult.computer);
-    }
+    const computerAttack = roundResult.computerAttack;
+    if (computerAttack) this.#styleComputerTarget(computerAttack);
   }
 
   #styleComputerTarget(computerAttack) {

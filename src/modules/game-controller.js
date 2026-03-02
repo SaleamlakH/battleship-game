@@ -19,24 +19,27 @@ export class GameController {
 
   playRound(coordinate) {
     const roundResult = {
-      human: null,
-      computer: null,
+      humanAttack: null,
+      computerAttack: null,
       winner: null,
     };
 
-    const { human, winner } = this.#humanAttack(coordinate);
-    [roundResult.human, roundResult.winner] = [human, winner];
+    const { humanAttack, winner } = this.#humanAttack(coordinate);
+    [roundResult.humanAttack, roundResult.winner] = [humanAttack, winner];
 
-    if (!human.success) return { invalid: true };
+    if (!humanAttack.success) return { invalid: true };
     if (winner) return roundResult;
 
     this.#changeCurrentPlayer();
 
     if (this.#isVsComputer) {
-      const { computer, winner } = this.#computerAttack();
-      [roundResult.computer, roundResult.winner] = [computer, winner];
+      const { computerAttack, winner } = this.#computerAttack();
+      [roundResult.computerAttack, roundResult.winner] = [
+        computerAttack,
+        winner,
+      ];
 
-      this.#currentPlayer.handleShotResult(computer);
+      this.#currentPlayer.handleShotResult(computerAttack);
       this.#changeCurrentPlayer();
     }
 
@@ -44,21 +47,21 @@ export class GameController {
   }
 
   #humanAttack(coordinate) {
-    const humanAttack = this.#opponent.gameBoard.receiveAttack(coordinate);
-    const human = { coordinate, ...humanAttack };
+    const attack = this.#opponent.gameBoard.receiveAttack(coordinate);
+    const humanAttack = { coordinate, ...attack };
     const winner = this.#hasWinner() ? this.#currentPlayer : null;
 
-    return { human, winner };
+    return { humanAttack, winner };
   }
 
   #computerAttack() {
     const target = this.#currentPlayer.chooseTarget();
-    const computerAttack = this.#opponent.gameBoard.receiveAttack(target);
+    const attack = this.#opponent.gameBoard.receiveAttack(target);
 
-    const computer = { ...computerAttack, coordinate: target };
+    const computerAttack = { ...attack, coordinate: target };
     const winner = this.#hasWinner() ? this.#opponent : null;
 
-    return { computer, winner };
+    return { computerAttack, winner };
   }
 
   #changeCurrentPlayer() {

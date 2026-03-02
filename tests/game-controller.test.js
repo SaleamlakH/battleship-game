@@ -71,13 +71,14 @@ describe('Game controller', () => {
       test('human and computer both attack with normal round', () => {
         const result = gameController.playRound([1, 2]);
 
-        expect(result.human).toBeDefined();
-        expect(result.computer).toBeDefined();
+        expect(result.humanAttack).toBeDefined();
+        expect(result.computerAttack).toBeDefined();
       });
 
       test('current player persists after both attacks', () => {
         gameController.playRound([1, 2]);
-        expect(gameController.currentPlayer).toEqual(player1);
+
+        expect(gameController.currentPlayer).toStrictEqual(player1);
       });
 
       test('computer does not attack when human wins', () => {
