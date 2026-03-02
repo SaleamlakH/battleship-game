@@ -47,7 +47,7 @@ export class Player {
 export class Computer extends Player {
   #targets;
   #candidateTargets = [];
-  #recentTarget = { target: null, vector: null };
+  #recentHit = { target: null, vector: null };
   #VECTORS = { left: [-1, 0], right: [1, 0], top: [0, -1], bottom: [0, 1] };
 
   constructor() {
@@ -69,9 +69,9 @@ export class Computer extends Player {
 
   chooseTarget() {
     // get hit
-    if (this.#recentTarget.target || this.#candidateTargets.length) {
+    if (this.#recentHit.vector || this.#candidateTargets.length) {
       const { target, index, vector } = this.#getCandidate();
-      this.#recentTarget = { ...this.#recentTarget, target, index, vector };
+      this.#recentHit.vector = vector;
 
       this.#deleteItem(this.#targets, index);
       return target;
@@ -80,7 +80,6 @@ export class Computer extends Player {
     // random target
     const index = Math.floor(Math.random() * this.#targets.length);
     const target = this.#targets[index];
-    this.#recentTarget = { ...this.#recentTarget, target, index };
 
     // remove from #targets
     this.#deleteItem(this.#targets, index);
@@ -88,18 +87,27 @@ export class Computer extends Player {
     return target;
   }
 
-  handleShotResult({ hit }) {
+  handleShotResult({ hit, coordinate }) {
     if (!hit) {
-      this.#recentTarget.target = null;
-      this.#recentTarget.vector = null;
+      this.#recentHit.target = null;
+      this.#recentHit.vector = null;
+      return;
+    }
+
+    // save it
+    this.#recentHit.target = coordinate;
+
+    // need to set new candidates;
+    if (!this.#candidateTargets.length) {
+      this.#setCandidateTargets(coordinate);
     }
   }
 
   #getCandidate() {
     // knows which side to follow
-    if (this.#recentTarget.target && this.#recentTarget.vector) {
-      const [x, y] = this.#recentTarget.target;
-      const [dx, dy] = this.#recentTarget.vector;
+    if (this.#recentHit.vector) {
+      const [x, y] = this.#recentHit.target;
+      const [dx, dy] = this.#recentHit.vector;
 
       const target = [x + dx, y + dy];
 
@@ -110,19 +118,14 @@ export class Computer extends Player {
 
       if (index >= 0) {
         this.#removeCrossCandidates([dx, dy]);
-        return { ...this.#recentTarget, index, target: [x + dx, y + dy] };
+        return { ...this.#recentHit, index, target: [x + dx, y + dy] };
       }
     }
-
-    // calculate possible targets
-    if (!this.#candidateTargets.length) this.#setCandidateTargets();
 
     return this.#candidateTargets.pop();
   }
 
-  #setCandidateTargets() {
-    const [x, y] = this.#recentTarget.target;
-
+  #setCandidateTargets([x, y]) {
     for (const key in this.#VECTORS) {
       const [dx, dy] = this.#VECTORS[key];
       const target = [x + dx, y + dy];

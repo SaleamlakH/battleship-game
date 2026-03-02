@@ -46,10 +46,20 @@ describe('Computer', () => {
     expect(target.length).toBe(2);
   });
 
-  test('Return a neighbor coordinate after hit shoot', () => {
+  test('Return adjacent coordinate after hit shoot', () => {
+    computer.handleShotResult({ coordinate: target, hit: true });
     const [x, y] = computer.chooseTarget();
 
     // absolute value of their difference is 0 or 1;
+    expect([0, 1]).toContain(Math.abs(target[0] - x));
+    expect([0, 1]).toContain(Math.abs(target[1] - y));
+  });
+
+  test('Return adjacent coordinate after consecutive hit and miss', () => {
+    computer.handleShotResult({ coordinate: target, hit: true });
+    computer.handleShotResult({ coordinate: target, hit: false });
+
+    const [x, y] = computer.chooseTarget();
     expect([0, 1]).toContain(Math.abs(target[0] - x));
     expect([0, 1]).toContain(Math.abs(target[1] - y));
   });
