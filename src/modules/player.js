@@ -71,8 +71,9 @@ export class Computer extends Player {
     // get hit
     if (this.#recentHit.vector || this.#candidateTargets.length) {
       const { target, index, vector } = this.#getCandidate();
-      this.#recentHit.vector = vector;
+      if (this.#recentHit.vector) this.#removeCrossCandidates(vector);
 
+      this.#recentHit.vector = vector;
       this.#deleteItem(this.#targets, index);
       return target;
     }
@@ -117,7 +118,6 @@ export class Computer extends Player {
       );
 
       if (index >= 0) {
-        this.#removeCrossCandidates([dx, dy]);
         return { ...this.#recentHit, index, target: [x + dx, y + dy] };
       }
     }
