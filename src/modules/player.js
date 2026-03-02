@@ -67,21 +67,17 @@ export class Computer extends Player {
     return targets;
   }
 
+  // get hit
   chooseTarget() {
-    // get hit
-    if (this.#recentHit.vector || this.#candidateTargets.length) {
-      const { target, index, vector } = this.#getCandidate();
+    const recentVector = this.#recentHit.vector;
 
-      this.#recentHit.vector = vector;
-      this.#deleteItem(this.#targets, index);
-      return target;
-    }
+    const candidate = recentVector
+      ? this.#calculateCandidate()
+      : this.#candidateTargets.pop();
 
-    // random target
-    const index = Math.floor(Math.random() * this.#targets.length);
-    const target = this.#targets[index];
+    const { target, vector, index } = candidate || this.#getRandomTarget();
 
-    // remove from #targets
+    this.#recentHit.vector = vector;
     this.#deleteItem(this.#targets, index);
 
     return target;
@@ -96,37 +92,46 @@ export class Computer extends Player {
 
     // save it
     this.#recentHit.target = coordinate;
+    const recentVector = this.#recentHit.vector;
 
     // knows in which direction to shot
-    if (this.#recentHit.vector) {
-      this.#removeCrossCandidates(this.#recentHit.vector);
-    }
+    if (recentVector) this.#removeCrossCandidates(recentVector);
 
     // need to set new candidates;
-    if (!this.#candidateTargets.length) {
+    if (!this.#candidateTargets.length && !recentVector) {
       this.#setCandidateTargets(coordinate);
+    }
+
+    // if we can't have valid calculated candidate
+    // we don't need the vector
+    // it will look in candidateTargets or get random one
+    if (recentVector && !this.#calculateCandidate()) {
+      this.#recentHit.vector = null;
     }
   }
 
-  #getCandidate() {
+  #getRandomTarget() {
+    const index = Math.floor(Math.random() * this.#targets.length);
+    const target = this.#targets[index];
+
+    return { target, index, vector: null };
+  }
+
+  #calculateCandidate() {
     // knows which side to follow
-    if (this.#recentHit.vector) {
-      const [x, y] = this.#recentHit.target;
-      const [dx, dy] = this.#recentHit.vector;
+    const [x, y] = this.#recentHit.target;
+    const [dx, dy] = this.#recentHit.vector;
 
-      const target = [x + dx, y + dy];
+    const target = [x + dx, y + dy];
 
-      // validate
-      const index = this.#targets.findIndex(
-        ([x, y]) => target[0] === x && target[1] === y,
-      );
+    // validate
+    const index = this.#targets.findIndex(
+      ([x, y]) => target[0] === x && target[1] === y,
+    );
 
-      if (index >= 0) {
-        return { ...this.#recentHit, index, target: [x + dx, y + dy] };
-      }
+    if (index >= 0) {
+      return { ...this.#recentHit, index, target: [x + dx, y + dy] };
     }
-
-    return this.#candidateTargets.pop();
   }
 
   #setCandidateTargets([x, y]) {
